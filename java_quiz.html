@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>☕ Java Arrays & Linked Lists Quiz | Delta University</title>
+<style>
+:root {
+  --primary: #f97316;
+  --primary-dark: #c2410c;
+  --primary-light: #fff7ed;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --bg: #fdf4e7;
+  --card: #ffffff;
+  --text: #1c1008;
+  --muted: #78716c;
+  --border: #e7e5e4;
+  --radius: 18px;
+  --shadow: 0 4px 28px rgba(249,115,22,0.10);
+  --shadow-hover: 0 8px 32px rgba(249,115,22,0.18);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 60px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ══ HEADER ══ */
+.header {
+  background: linear-gradient(135deg, #c2410c 0%, #f97316 60%, #fb923c 100%);
+  color: #fff;
+  padding: clamp(18px,4vw,28px) clamp(16px,4vw,24px) clamp(14px,3vw,20px);
+  text-align: center;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 20px rgba(194,65,12,0.3);
+}
+.header h1 { font-size: clamp(1rem,4vw,1.3rem); font-weight: 800; letter-spacing:.3px; }
+.header p  { font-size: clamp(0.72rem,2.5vw,0.82rem); opacity:.88; margin-top:3px; }
+.progress-bar-wrap { background: rgba(255,255,255,0.22); border-radius:20px; height:7px; margin-top:12px; overflow:hidden; }
+.progress-bar-fill { height:100%; background:#fff; border-radius:20px; transition: width .4s ease; }
+.progress-text { font-size:clamp(0.7rem,2.2vw,0.78rem); opacity:.9; margin-top:5px; font-weight:600; }
+
+/* ══ SCREENS ══ */
+.screen { display:none; }
+.screen.active { display:block; }
+
+/* ══════════════════════
+   HOME SCREEN
+══════════════════════ */
+.home-wrap {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: clamp(16px,4vw,28px) clamp(12px,4vw,20px);
+}
+.home-hero {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: clamp(22px,5vw,32px) clamp(16px,4vw,24px);
+  text-align: center;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+  border: 1.5px solid rgba(249,115,22,0.08);
+}
+.home-hero .big-emoji { font-size: clamp(2.4rem,8vw,3.2rem); margin-bottom:10px; }
+.home-hero h2 { font-size: clamp(1.1rem,4vw,1.4rem); font-weight:800; color:var(--primary-dark); }
+.home-hero p  { color:var(--muted); font-size:clamp(0.8rem,2.8vw,0.9rem); margin-top:8px; line-height:1.65; }
+
+.stats-row { display:flex; gap:10px; margin-top:18px; }
+.stat-pill {
+  flex:1; background:var(--primary-light);
+  border-radius:12px; padding:10px 6px; text-align:center;
+}
+.stat-pill .sn { font-size:clamp(1rem,4vw,1.3rem); font-weight:800; color:var(--primary-dark); }
+.stat-pill .sl { font-size:clamp(0.62rem,2vw,0.72rem); color:var(--muted); font-weight:600; margin-top:2px; }
+
+/* mode toggle */
+.mode-section { margin-bottom:20px; }
+.mode-label { font-size:clamp(0.7rem,2.5vw,0.78rem); font-weight:800; color:var(--muted); letter-spacing:1px; text-transform:uppercase; margin-bottom:10px; }
+.mode-toggle { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.mode-card {
+  background:var(--card); border:2.5px solid var(--border);
+  border-radius:14px; padding:clamp(14px,3.5vw,20px) 10px;
+  display:flex; flex-direction:column; align-items:center; gap:7px;
+  cursor:pointer; font-size:clamp(0.82rem,2.8vw,0.92rem); font-weight:700;
+  color:var(--muted); transition:all .2s; user-select:none;
+}
+.mode-card .mc-icon { font-size:clamp(1.4rem,5vw,1.8rem); }
+.mode-card .mc-desc { font-size:clamp(0.65rem,2.2vw,0.73rem); font-weight:500; color:var(--muted); text-align:center; }
+.mode-card:hover { border-color:var(--primary); background:var(--primary-light); color:var(--primary-dark); }
+.mode-card.sel { border-color:var(--primary); background:var(--primary-light); color:var(--primary-dark); }
+.mode-card.sel .mc-desc { color:var(--primary); }
+
+/* topic toggle */
+.topic-toggle { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:20px; }
+.topic-card {
+  background:var(--card); border:2.5px solid var(--border);
+  border-radius:12px; padding:12px 8px;
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  cursor:pointer; font-size:clamp(0.72rem,2.5vw,0.8rem); font-weight:700;
+  color:var(--muted); transition:all .2s; user-select:none; text-align:center;
+}
+.topic-card .tc-icon { font-size:1.4rem; }
+.topic-card:hover, .topic-card.sel { border-color:var(--primary); background:var(--primary-light); color:var(--primary-dark); }
+
+.start-btn {
+  width:100%;
+  background: linear-gradient(135deg, #c2410c, #f97316);
+  color:#fff; border:none; border-radius:16px;
+  padding:clamp(15px,4vw,20px);
+  font-size:clamp(0.95rem,3.5vw,1.1rem); font-weight:800;
+  cursor:pointer; letter-spacing:.3px;
+  box-shadow: 0 6px 20px rgba(194,65,12,0.3);
+  transition: transform .15s, box-shadow .15s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.start-btn:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(194,65,12,0.4); }
+.start-btn:active { transform:translateY(0); }
+
+/* ══════════════════════
+   QUIZ SCREEN
+══════════════════════ */
+.quiz-wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: clamp(14px,3.5vw,22px) clamp(12px,4vw,18px);
+}
+.set-banner {
+  background: linear-gradient(135deg,#c2410c,#fb923c);
+  color:#fff; border-radius:12px; padding:10px 16px;
+  font-size:clamp(0.75rem,2.5vw,0.85rem); font-weight:700;
+  margin-bottom:14px; display:flex; align-items:center; gap:8px;
+}
+.q-card {
+  background:var(--card); border-radius:var(--radius);
+  padding:clamp(18px,4vw,26px) clamp(14px,4vw,22px);
+  box-shadow:var(--shadow); margin-bottom:14px;
+  border:1.5px solid rgba(249,115,22,0.07);
+}
+.q-meta {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:14px; flex-wrap:wrap; gap:6px;
+}
+.q-badge {
+  background:var(--primary-light); color:var(--primary-dark);
+  font-size:clamp(0.68rem,2.2vw,0.76rem); font-weight:800;
+  padding:5px 12px; border-radius:20px;
+}
+.q-topic-tag {
+  font-size:clamp(0.64rem,2vw,0.72rem); color:var(--muted);
+  background:#f9fafb; padding:4px 11px; border-radius:20px;
+  font-weight:600; border:1px solid var(--border);
+}
+.q-text {
+  font-size:clamp(0.9rem,3vw,1.02rem); font-weight:700;
+  line-height:1.65; margin-bottom:18px; color:var(--text);
+  font-family: 'Courier New', monospace;
+}
+.q-text code {
+  background:#f3f4f6; padding:1px 5px; border-radius:5px;
+  font-size:0.9em; color:#c2410c;
+}
+
+/* options */
+.opts { display:flex; flex-direction:column; gap:clamp(8px,2vw,11px); }
+.opt-btn {
+  background:#fafafa; border:2px solid var(--border);
+  border-radius:13px; padding:clamp(11px,3vw,15px) clamp(12px,3.5vw,16px);
+  font-size:clamp(0.84rem,2.8vw,0.93rem); font-weight:500; color:var(--text);
+  cursor:pointer; text-align:left;
+  display:flex; align-items:center; gap:12px;
+  transition:all .18s; width:100%; line-height:1.45;
+}
+.opt-btn:hover:not(:disabled) {
+  border-color:var(--primary); background:var(--primary-light);
+  transform:translateX(4px);
+}
+.opt-btn .ol {
+  min-width:30px; height:30px; background:#fff; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:clamp(0.72rem,2.2vw,0.8rem); color:var(--muted);
+  flex-shrink:0; border:2px solid var(--border); transition:all .18s;
+}
+.opt-btn.correct { border-color:var(--success); background:#f0fdf4; color:#15803d; }
+.opt-btn.correct .ol { background:var(--success); color:#fff; border-color:var(--success); }
+.opt-btn.wrong   { border-color:var(--danger);  background:#fef2f2; color:#dc2626; }
+.opt-btn.wrong   .ol { background:var(--danger);  color:#fff; border-color:var(--danger); }
+.opt-btn:disabled { cursor:default; }
+.opt-text { font-family: 'Courier New', monospace; font-size: 0.93em; }
+
+/* feedback */
+.fb-box {
+  margin-top:13px; padding:clamp(10px,3vw,14px) clamp(13px,3.5vw,16px);
+  border-radius:12px; font-size:clamp(0.8rem,2.5vw,0.88rem);
+  font-weight:600; display:none; align-items:flex-start; gap:8px; line-height:1.5;
+}
+.fb-box.show { display:flex; }
+.fb-box.correct { background:#f0fdf4; color:#15803d; border:1.5px solid #bbf7d0; }
+.fb-box.wrong   { background:#fef2f2; color:#dc2626;  border:1.5px solid #fecaca; }
+
+/* nav */
+.nav-row { display:flex; gap:10px; margin-top:14px; }
+.nav-btn {
+  flex:1; padding:clamp(13px,3.5vw,16px);
+  border:none; border-radius:13px;
+  font-size:clamp(0.88rem,3vw,0.97rem); font-weight:700;
+  cursor:pointer; transition:all .18s;
+}
+.btn-next {
+  background:linear-gradient(135deg,#c2410c,#f97316);
+  color:#fff; box-shadow:0 4px 14px rgba(194,65,12,.3); display:none;
+}
+.btn-next.show { display:block; }
+.btn-next:hover { transform:translateY(-2px); }
+.btn-skip { background:#f3f4f6; color:var(--muted); border:2px solid var(--border); }
+.btn-skip:hover { border-color:var(--primary); color:var(--primary-dark); background:var(--primary-light); }
+
+.show-result-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #fff; border: none; border-radius: 13px;
+  padding: clamp(13px,3.5vw,16px);
+  font-size: clamp(0.88rem,3vw,0.97rem); font-weight: 700;
+  cursor: pointer; box-shadow: 0 4px 14px rgba(239,68,68,0.3);
+  transition: all .18s; margin-top: 14px;
+}
+.show-result-btn:hover { transform: translateY(-2px); }
+
+/* ══════════════════════
+   RESULT SCREEN
+══════════════════════ */
+.res-wrap {
+  max-width: 520px;
+  margin: clamp(20px,5vw,36px) auto 0;
+  padding: 0 clamp(12px,4vw,18px);
+}
+.res-card {
+  background:var(--card); border-radius:var(--radius);
+  padding:clamp(24px,5vw,36px) clamp(18px,4vw,28px);
+  box-shadow:var(--shadow); text-align:center;
+  border:1.5px solid rgba(249,115,22,0.07);
+}
+.res-emoji { font-size:clamp(3rem,10vw,4rem); margin-bottom:10px; }
+.res-title { font-size:clamp(1.25rem,5vw,1.5rem); font-weight:800; }
+.res-sub   { color:var(--muted); font-size:clamp(0.82rem,2.8vw,0.9rem); margin:7px 0 20px; }
+
+.score-ring {
+  width:clamp(110px,30vw,130px); height:clamp(110px,30vw,130px);
+  border-radius:50%; margin:0 auto 22px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-weight:800; border:8px solid;
+}
+.score-ring .pct  { font-size:clamp(1.6rem,6vw,2rem); line-height:1; }
+.score-ring .slbl { font-size:clamp(0.65rem,2vw,0.74rem); font-weight:600; opacity:.72; }
+
+.res-grid {
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+  gap:clamp(7px,2vw,10px); margin-bottom:22px;
+}
+.res-stat { background:var(--bg); border-radius:12px; padding:clamp(11px,3vw,15px) 6px; }
+.res-stat .rn { font-size:clamp(1.2rem,5vw,1.5rem); font-weight:800; }
+.res-stat .rl { font-size:clamp(0.62rem,2vw,0.7rem); color:var(--muted); font-weight:600; margin-top:2px; }
+
+.res-acts { display:flex; flex-direction:column; gap:9px; }
+.res-acts button {
+  padding:clamp(13px,3.5vw,16px); border:none; border-radius:13px;
+  font-size:clamp(0.88rem,3vw,0.97rem); font-weight:700; cursor:pointer; transition:all .18s;
+}
+.btn-retry   { background:linear-gradient(135deg,#c2410c,#f97316); color:#fff; box-shadow:0 4px 14px rgba(194,65,12,.25); }
+.btn-retry:hover { transform:translateY(-2px); }
+.btn-review2 { background:var(--bg); color:var(--primary-dark); border:2px solid var(--primary) !important; }
+.btn-home2   { background:var(--bg); color:var(--muted); border:2px solid var(--border) !important; }
+
+/* ══════════════════════
+   REVIEW SCREEN
+══════════════════════ */
+.rev-wrap {
+  max-width:640px; margin:0 auto;
+  padding:clamp(14px,4vw,22px) clamp(12px,4vw,18px);
+}
+.rev-hdr { text-align:center; margin-bottom:18px; }
+.rev-hdr h2 { font-size:clamp(1rem,4vw,1.2rem); font-weight:800; }
+.rev-hdr p  { color:var(--muted); font-size:clamp(0.76rem,2.5vw,0.85rem); margin-top:4px; }
+
+.rev-card {
+  background:var(--card); border-radius:var(--radius);
+  padding:clamp(16px,4vw,22px); margin-bottom:12px;
+  box-shadow:var(--shadow); border-left:4px solid var(--border);
+}
+.rev-card.c-right { border-left-color: var(--success); }
+.rev-card.c-wrong  { border-left-color: var(--danger); }
+.rev-card.c-skip   { border-left-color: var(--warning); }
+
+.rev-q { font-size:clamp(0.84rem,2.8vw,0.93rem); font-weight:700; margin-bottom:10px; font-family:'Courier New',monospace; }
+.rev-ans { font-size:clamp(0.78rem,2.5vw,0.86rem); }
+.rev-ans span { font-weight:700; }
+
+.btn-back-home {
+  width:100%; margin-top:18px;
+  background:linear-gradient(135deg,#c2410c,#f97316);
+  color:#fff; border:none; border-radius:13px;
+  padding:clamp(13px,3.5vw,16px);
+  font-size:clamp(0.88rem,3vw,0.97rem); font-weight:700;
+  cursor:pointer; box-shadow:0 4px 14px rgba(194,65,12,.25);
+  transition:all .18s;
+}
+.btn-back-home:hover { transform:translateY(-2px); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>☕ Java Arrays &amp; Linked Lists Quiz</h1>
+  <p>Delta University · Data Structures</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+  </div>
+  <div class="progress-text" id="progressText">Ready</div>
+</div>
+
+<!-- ══ HOME SCREEN ══ -->
+<div class="screen active" id="homeScreen">
+  <div class="home-wrap">
+    <div class="home-hero">
+      <div class="big-emoji">☕</div>
+      <h2>Java Arrays &amp; Linked Lists</h2>
+      <p>اختبر نفسك في Arrays وLinked Lists بالجاوه — اختار الموضوع والـ mode وابدأ!</p>
+      <div class="stats-row">
+        <div class="stat-pill"><div class="sn" id="statTotal">150</div><div class="sl">Total Qs</div></div>
+        <div class="stat-pill"><div class="sn" id="statArrays">78</div><div class="sl">Arrays</div></div>
+        <div class="stat-pill"><div class="sn" id="statLL">41</div><div class="sl">Linked Lists</div></div>
+      </div>
+    </div>
+
+    <div class="mode-section">
+      <div class="mode-label">📚 Topic</div>
+      <div class="topic-toggle">
+        <div class="topic-card sel" data-topic="all" onclick="selectTopic('all')">
+          <span class="tc-icon">🌐</span>All Topics
+        </div>
+        <div class="topic-card" data-topic="arrays" onclick="selectTopic('arrays')">
+          <span class="tc-icon">📦</span>Arrays
+        </div>
+        <div class="topic-card" data-topic="linkedlist" onclick="selectTopic('linkedlist')">
+          <span class="tc-icon">🔗</span>Linked Lists
+        </div>
+      </div>
+
+      <div class="mode-label">🎯 Mode</div>
+      <div class="mode-toggle">
+        <div class="mode-card sel" data-mode="exam" onclick="selectMode('exam')">
+          <span class="mc-icon">📝</span>Exam Mode
+          <span class="mc-desc">No immediate feedback</span>
+        </div>
+        <div class="mode-card" data-mode="practice" onclick="selectMode('practice')">
+          <span class="mc-icon">🎓</span>Practice Mode
+          <span class="mc-desc">Instant feedback</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="start-btn" onclick="startQuiz()">🚀 Start Quiz</button>
+  </div>
+</div>
+
+<!-- ══ QUIZ SCREEN ══ -->
+<div class="screen" id="quizScreen">
+  <div class="quiz-wrap">
+    <div class="set-banner" id="setBanner">☕ Java Quiz</div>
+    <div class="q-card">
+      <div class="q-meta">
+        <div class="q-badge" id="qBadge">Q 1 / 20</div>
+        <div class="q-topic-tag" id="qTopicTag">Arrays</div>
+      </div>
+      <div class="q-text" id="qText"></div>
+      <div class="opts" id="optsContainer"></div>
+      <div class="fb-box" id="fbBox"></div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn btn-skip" onclick="skipQ()">Skip ⏭</button>
+      <button class="nav-btn btn-next show" id="btnNext" onclick="nextQ()">Next ▶</button>
+    </div>
+    <button class="show-result-btn" onclick="showResult()">📊 Show Result Now</button>
+  </div>
+</div>
+
+<!-- ══ RESULT SCREEN ══ -->
+<div class="screen" id="resultScreen">
+  <div class="res-wrap">
+    <div class="res-card">
+      <div class="res-emoji" id="resEmoji">🎉</div>
+      <div class="res-title" id="resTitle">Well Done!</div>
+      <div class="res-sub" id="resSub">Here's how you did</div>
+      <div class="score-ring" id="scoreRing">
+        <div class="pct" id="scorePct">0%</div>
+        <div class="slbl">Score</div>
+      </div>
+      <div class="res-grid">
+        <div class="res-stat"><div class="rn" id="rCorrect" style="color:var(--success)">0</div><div class="rl">✅ Correct</div></div>
+        <div class="res-stat"><div class="rn" id="rWrong" style="color:var(--danger)">0</div><div class="rl">❌ Wrong</div></div>
+        <div class="res-stat"><div class="rn" id="rSkipped" style="color:var(--warning)">0</div><div class="rl">⏭ Skipped</div></div>
+      </div>
+      <div class="res-acts">
+        <button class="btn-retry" onclick="retryQuiz()">🔄 Retry Same Set</button>
+        <button class="btn-review2" onclick="showReview()">📖 Review Answers</button>
+        <button class="btn-home2" onclick="goHome()">🏠 Back Home</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REVIEW SCREEN ══ -->
+<div class="screen" id="reviewScreen">
+  <div class="rev-wrap">
+    <div class="rev-hdr">
+      <h2>📖 Answer Review</h2>
+      <p>Go through all questions and answers</p>
+    </div>
+    <div id="revContainer"></div>
+    <button class="btn-back-home" onclick="goHome()">🏠 Back Home</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// QUESTIONS DATA
+// ══════════════════════════════════════════════
+const QUESTIONS = [
+  // ── ARRAYS ──
+  {q:"What is the correct way to declare an array in Java?", opts:["int arr[];","array arr[10];","int arr;","arr{10};"], ans:0, topic:"Arrays"},
+  {q:"How do you allocate memory for an array in Java?", opts:["arr = new int[10];","arr = alloc int[10];","arr = new int(10);","arr = int[10];"], ans:0, topic:"Arrays"},
+  {q:"What is the index of the first element in a Java array?", opts:["1","0","-1","Depends on array type"], ans:1, topic:"Arrays"},
+  {q:"Which of the following correctly initializes an array?", opts:["int arr = {1,2,3};","int arr[] = {1,2,3};","int[] arr = new {1,2,3};","int arr() = {1,2,3};"], ans:1, topic:"Arrays"},
+  {q:"What happens if you access an array element out of bounds?", opts:["Causes a compile-time error","Compiles and returns 0","Returns null","Compiles but throws an exception at runtime"], ans:3, topic:"Arrays"},
+  {q:"What is the default value of an int array element?", opts:["null","NaN","undefined","0"], ans:3, topic:"Arrays"},
+  {q:"What is the default value of a boolean array element?", opts:["false","null","true","0"], ans:0, topic:"Arrays"},
+  {q:"Which statement correctly copies all elements of array `a` into array `b`?", opts:["System.arraycopy(a,0,b,0,a.length);","b = a;","copy(a,b);","b == a;"], ans:0, topic:"Arrays"},
+  {q:"What type of elements can an array hold?", opts:["Only primitives","Both primitives and objects","Only objects","Only Strings"], ans:1, topic:"Arrays"},
+  {q:"Which of these is true about arrays in Java?", opts:["They can change size dynamically","Their size is fixed once created","They are linked lists","They are faster than variables"], ans:1, topic:"Arrays"},
+  {q:"What is printed by: System.out.println(new int[3].length);", opts:["0","1","2","3"], ans:3, topic:"Arrays"},
+  {q:"Which exception is thrown when accessing an array element beyond its limit?", opts:["IndexOutOfBoundsException","NullPointerException","IllegalArgumentException","ArrayIndexOutOfBoundsException"], ans:3, topic:"Arrays"},
+  {q:"How can you declare a two-dimensional array in Java?", opts:["Both int[][] arr and int arr[][]","int[][] arr; only","int arr[][]; only","int arr[5][5];"], ans:0, topic:"Arrays"},
+  {q:"What will arr[arr.length - 1] access?", opts:["The middle element","The first element","Throws exception","The last element"], ans:3, topic:"Arrays"},
+  {q:"Which method sorts an array in Java?", opts:["Collections.sort()","sortArray()","Arrays.sort()","array.sort()"], ans:2, topic:"Arrays"},
+  {q:"What package contains the Arrays class?", opts:["java.io","java.array","java.util","java.lang"], ans:2, topic:"Arrays"},
+  {q:"How can you convert an array to a list?", opts:["new ArrayList(array)","array.toList()","List.of(array)","Arrays.asList(array)"], ans:3, topic:"Arrays"},
+  {q:"What will Arrays.equals(a, b) return if arrays have the same elements?", opts:["equals","false","true","1"], ans:2, topic:"Arrays"},
+  {q:"How can you fill an array with a specific value?", opts:["array.fillAll(value);","Arrays.fill(arr, value);","fill(arr, value);","arr.fill(value);"], ans:1, topic:"Arrays"},
+  {q:"What is printed by: int[] a = {}; System.out.println(a.length);", opts:["1","0","null","Error"], ans:1, topic:"Arrays"},
+  {q:"How many elements are in: int[][] arr = new int[2][3];", opts:["6","2","3","5"], ans:0, topic:"Arrays"},
+  {q:"Can an array in Java store elements of different data types?", opts:["Yes","Only strings","Only objects","No"], ans:3, topic:"Arrays"},
+  {q:"Which of these statements is true for arrays?", opts:["Arrays are classes in Java","Arrays are primitive data types","Arrays are not objects","Arrays are interfaces"], ans:0, topic:"Arrays"},
+  {q:"How to print all elements of an array?", opts:["print(arr);","System.out.print(arr);","arr.toString();","System.out.println(Arrays.toString(arr));"], ans:3, topic:"Arrays"},
+  {q:"Which keyword is used to create an array dynamically?", opts:["alloc","create","malloc","new"], ans:3, topic:"Arrays"},
+  {q:"What is the output of System.out.println(args.length); in main()?", opts:["Compilation error","Number of command-line arguments","Number of array elements","0 always"], ans:1, topic:"Arrays"},
+  {q:"What does Arrays.binarySearch(arr, key) return?", opts:["Index of key","-1 always","True if found","Boolean"], ans:0, topic:"Arrays"},
+  {q:"Which of these can be used to clone an array?", opts:["new Array(arr)","arr.clone()","Arrays.copy()","clone(arr)"], ans:1, topic:"Arrays"},
+  {q:"What is the output of: System.out.println(new int[]{1,2,3}[1]);", opts:["2","3","1","Error"], ans:0, topic:"Arrays"},
+  {q:"Which statement is true for a 2D array in Java?", opts:["It is a matrix","It stores objects only","It must be rectangular","It is an array of arrays"], ans:3, topic:"Arrays"},
+  {q:"How do you declare an array reference without allocating memory?", opts:["int arr[] = {};","int[] arr = null;","int arr[] = new int[];","int arr[] = (int) null;"], ans:1, topic:"Arrays"},
+  {q:"What is the return type of Arrays.toString()?", opts:["char[]","void","String","Object"], ans:2, topic:"Arrays"},
+  {q:"Which statement correctly reverses an array manually?", opts:["reverse(arr);","Arrays.reverse()","Loop swapping elements","Collections.reverse()"], ans:2, topic:"Arrays"},
+  {q:"Which class provides utility methods for arrays?", opts:["Array","Arrays","Math","Collections"], ans:1, topic:"Arrays"},
+  {q:"What is the output of: Arrays.toString(new int[]{1,2,3})", opts:["[1, 2, 3]","1,2,3","[123]","123"], ans:0, topic:"Arrays"},
+  {q:"What does arr.length return for a null array?", opts:["Throws NullPointerException","undefined","0","null"], ans:0, topic:"Arrays"},
+  {q:"The following is an advantage of using array:", opts:["Accessing elements at specified positions with constant time","Insertion based on position","It has fixed size","Wasting memory space if fewer elements used"], ans:0, topic:"Arrays"},
+  {q:"After deleting index k in an array:", opts:["Elements shift left.","Last element moves to k.","Array recreated smaller.","Array auto-sorts."], ans:0, topic:"Arrays"},
+  {q:"What is a data structure?", opts:["All of the above","A group of data elements under one name","A way of storing and organizing data","A mathematical model of data organization"], ans:0, topic:"Arrays"},
+  {q:"What is the goal of a data structure?", opts:["To organize data","To facilitate efficient storage","All of the above","To facilitate efficient retrieval"], ans:2, topic:"Arrays"},
+  {q:"In a Linear Data Structure, data is arranged:", opts:["Using dynamic memory only.","Using pointers to random locations.","Sequentially, one after another.","In hierarchy."], ans:2, topic:"Arrays"},
+  {q:"What is the definition of data?", opts:["A conclusion drawn from facts","A combination of textual and numeric information","A collection of facts used for analysis","Information presented in various formats"], ans:2, topic:"Arrays"},
+  {q:"Why do arrays allow fast access?", opts:["Random access lookup time.","Automatic sorting.","Use of pointers.","Resizable memory."], ans:0, topic:"Arrays"},
+  {q:"An array is an example of a:", opts:["Non-linear data structure","Graph data structure","None of the above","Linear data structure"], ans:3, topic:"Arrays"},
+  {q:"The main disadvantage of using array:", opts:["Insertion is sequential","Wasting memory space if elements entered are less than reserved size","It has variable size","Accessing elements with constant time"], ans:1, topic:"Arrays"},
+  {q:"What is printed by: System.out.println(new int[3].length);", opts:["0","1","2","3"], ans:3, topic:"Arrays"},
+  {q:"What will arr[arr.length - 1] access?", opts:["The middle element","The first element","The last element","Throws exception"], ans:2, topic:"Arrays"},
+  {q:"Which of these is true about arrays in Java? (size)", opts:["They are linked lists","They can change size dynamically","They are faster than variables","Their size is fixed once created"], ans:3, topic:"Arrays"},
+  {q:"What elements can Java arrays hold?", opts:["Both primitives and objects","Only Strings","Only primitives","Only objects"], ans:0, topic:"Arrays"},
+  {q:"What is the output of System.out.println(args.length) in main()?", opts:["Number of array elements","Number of command-line arguments","Compilation error","0 always"], ans:1, topic:"Arrays"},
+
+  // ── LINKED LISTS ──
+  {q:"What is a linked list?", opts:["A collection of arrays","A linear data structure of nodes connected by pointers","A fixed-size stack","A type of recursion"], ans:1, topic:"Linked Lists"},
+  {q:"Which of the following is NOT true about linked lists?", opts:["They store elements contiguously in memory","They can store heterogeneous data types","They use pointers to connect nodes","They are dynamic in size"], ans:0, topic:"Linked Lists"},
+  {q:"What does each node in a linked list contain?", opts:["Only the address of head","Only a pointer","Only data","Data and pointer(s)"], ans:3, topic:"Linked Lists"},
+  {q:"What does the head of a linked list represent?", opts:["The middle node","The first node","The last node","The null node"], ans:1, topic:"Linked Lists"},
+  {q:"What does the tail node of a linked list point to?", opts:["Random node","Middle node","Head node","Null"], ans:3, topic:"Linked Lists"},
+  {q:"Linked lists are preferred over arrays because they are:", opts:["Faster for random access","Dynamic and allow easy insertion/deletion","Fixed in size","Simpler to implement"], ans:1, topic:"Linked Lists"},
+  {q:"Which of these is NOT a type of linked list?", opts:["Singly","Circular","Doubly","Triply"], ans:3, topic:"Linked Lists"},
+  {q:"In a singly linked list, traversal can be done:", opts:["Randomly","Both directions","Backward only","Forward only"], ans:3, topic:"Linked Lists"},
+  {q:"In a doubly linked list, each node contains:", opts:["No pointer","2 pointers","1 pointer","3 pointers"], ans:1, topic:"Linked Lists"},
+  {q:"In a circular linked list, the last node points to:", opts:["Null","The head node","Itself","Previous node"], ans:1, topic:"Linked Lists"},
+  {q:"What happens if the circular linked list is traversed without a stop condition?", opts:["Traversal loops infinitely","Traversal ends","Error occurs","It deletes nodes"], ans:0, topic:"Linked Lists"},
+  {q:"Which of these is NOT an operation on linked list?", opts:["Traversal","Deletion","Insertion","Compilation"], ans:3, topic:"Linked Lists"},
+  {q:"Which pointer indicates the end of a singly linked list?", opts:["Null","Start","Last","Prev"], ans:0, topic:"Linked Lists"},
+  {q:"What is the time complexity for inserting at the beginning of a linked list?", opts:["O(n)","O(n^2)","O(log n)","O(1)"], ans:3, topic:"Linked Lists"},
+  {q:"In the code, what does 'node next' represent?", opts:["Pointer to previous node","Array index","Pointer to next node","Data value"], ans:2, topic:"Linked Lists"},
+  {q:"Which method is used to print all elements of a linked list?", opts:["showNodes()","printAll()","printList()","display()"], ans:2, topic:"Linked Lists"},
+  {q:"In the insertion-at-beginning algorithm, what happens if the list is empty?", opts:["Data lost","New node is ignored","Program crashes","Head points to new node"], ans:3, topic:"Linked Lists"},
+  {q:"Which is the correct Java declaration for a linked list node?", opts:["Node { int value; Node link; }","node data, next;","struct node { int data; }","class node { int data; node next; }"], ans:3, topic:"Linked Lists"},
+  {q:"In Java, how do you define a new node?", opts:["node n = new node(value);","new node(value);","node n = node(value);","node n(value);"], ans:0, topic:"Linked Lists"},
+  {q:"In insertion at a given position, what is the first step?", opts:["Reverse the list","Delete a node","Print list","Create new node"], ans:3, topic:"Linked Lists"},
+  {q:"What does the statement lk.next = head; do?", opts:["Reverses list","Deletes first node","Links new node to existing list","Creates loop"], ans:2, topic:"Linked Lists"},
+  {q:"In the reversal algorithm, how many pointers are used?", opts:["2","3","1","4"], ans:1, topic:"Linked Lists"},
+  {q:"In reversal, what does the 'prev' pointer store?", opts:["Previous node","Current node","Next node","Head node"], ans:0, topic:"Linked Lists"},
+  {q:"When reversing a linked list, what should the original head point to at the end?", opts:["Middle node","Null","New head","Last node"], ans:1, topic:"Linked Lists"},
+  {q:"Which operation uses the line cur.next = prev;", opts:["Search","Reversal","Insertion","Deletion"], ans:1, topic:"Linked Lists"},
+  {q:"If a linked list is empty, what is the value of head?", opts:["null","undefined","1","0"], ans:0, topic:"Linked Lists"},
+  {q:"Which operation adds a new node at the beginning?", opts:["insertstart()","insertatbegin()","append()","addfirst()"], ans:1, topic:"Linked Lists"},
+  {q:"In Java implementation, what is the return type of reverseList() method?", opts:["Node","boolean","void","int"], ans:2, topic:"Linked Lists"},
+  {q:"Which pointer is moved to traverse the list?", opts:["prev","head","null","cur"], ans:3, topic:"Linked Lists"},
+  {q:"In a doubly linked list, deletion at the end requires:", opts:["No pointer change","Changing both next and previous pointers","Changing next pointer only","Changing data only"], ans:1, topic:"Linked Lists"},
+  {q:"Which of these can be implemented using linked list?", opts:["Stack","Queue","All of the above","Graph"], ans:2, topic:"Linked Lists"},
+  {q:"Which Java keyword is used to create an object for node?", opts:["make","new","alloc","create"], ans:1, topic:"Linked Lists"},
+  {q:"What is the main drawback of linked lists compared to arrays?", opts:["Dynamic memory","Slow traversal","Fast insertion","Fixed size"], ans:1, topic:"Linked Lists"},
+  {q:"Which linked list type allows traversal in both directions?", opts:["Simple","Singly","Doubly","Circular"], ans:2, topic:"Linked Lists"},
+  {q:"In the reversal process, when does the while loop stop?", opts:["temp == null","cur == null","head == null","prev == null"], ans:1, topic:"Linked Lists"},
+  {q:"What is the output of an empty linked list when printed?", opts:["error","0","[]","null"], ans:2, topic:"Linked Lists"},
+  {q:"Which of these correctly updates the head after reversal?", opts:["head = prev;","head = temp;","head = next;","prev = head;"], ans:0, topic:"Linked Lists"},
+  {q:"Which method displays all elements in Java linked list implementation?", opts:["show()","printAll()","printList()","displayList()"], ans:2, topic:"Linked Lists"},
+  {q:"What is the advantage of dynamic memory in linked lists?", opts:["Fixed memory usage","Slower execution","Prevents memory allocation","Allocates/deallocates as needed"], ans:3, topic:"Linked Lists"},
+  {q:"Linked list objects are arranged in:", opts:["Random order","Linear order","Nonlinear order","All the above"], ans:1, topic:"Linked Lists"},
+  {q:"Push on full stack results in:", opts:["Stack Underflow","Access Violation","Stack Overflow","Index Out of Bounds"], ans:2, topic:"Linked Lists"},
+];
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let selectedTopic = "all";
+let selectedMode = "exam";
+let quizQuestions = [];
+let currentIdx = 0;
+let answers = []; // null = not answered yet, -1 = skipped, 0..3 = chosen
+let answered = false;
+
+function selectTopic(t) {
+  selectedTopic = t;
+  document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('sel'));
+  document.querySelector(`.topic-card[data-topic="${t}"]`).classList.add('sel');
+}
+function selectMode(m) {
+  selectedMode = m;
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('sel'));
+  document.querySelector(`.mode-card[data-mode="${m}"]`).classList.add('sel');
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  let pool = QUESTIONS;
+  if (selectedTopic === "arrays") pool = QUESTIONS.filter(q => q.topic === "Arrays");
+  else if (selectedTopic === "linkedlist") pool = QUESTIONS.filter(q => q.topic === "Linked Lists");
+
+  // Deduplicate by question text
+  const seen = new Set();
+  const unique = [];
+  for (const q of pool) {
+    if (!seen.has(q.q)) { seen.add(q.q); unique.push(q); }
+  }
+  quizQuestions = shuffle(unique);
+  answers = new Array(quizQuestions.length).fill(null);
+  currentIdx = 0;
+
+  // Update stats
+  const arrCount = QUESTIONS.filter(q => q.topic === "Arrays");
+  const seen2 = new Set(); const uArr = [];
+  for (const q of arrCount) { if (!seen2.has(q.q)) { seen2.add(q.q); uArr.push(q); } }
+  const llCount = QUESTIONS.filter(q => q.topic === "Linked Lists");
+  const seen3 = new Set(); const uLL = [];
+  for (const q of llCount) { if (!seen3.has(q.q)) { seen3.add(q.q); uLL.push(q); } }
+  document.getElementById('statArrays').textContent = uArr.length;
+  document.getElementById('statLL').textContent = uLL.length;
+  document.getElementById('statTotal').textContent = uArr.length + uLL.length;
+
+  showScreen('quizScreen');
+  renderQ();
+}
+
+function renderQ() {
+  if (currentIdx >= quizQuestions.length) { showResult(); return; }
+  const q = quizQuestions[currentIdx];
+  answered = false;
+
+  document.getElementById('qBadge').textContent = `Q ${currentIdx + 1} / ${quizQuestions.length}`;
+  document.getElementById('qTopicTag').textContent = q.topic;
+  document.getElementById('setBanner').textContent = `☕ Java ${q.topic} Quiz`;
+
+  // Progress
+  const pct = Math.round((currentIdx / quizQuestions.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${currentIdx} / ${quizQuestions.length} answered`;
+
+  // Format question - wrap backtick code
+  let qText = q.q.replace(/`([^`]+)`/g, '<code>$1</code>');
+  document.getElementById('qText').innerHTML = qText;
+
+  // Options
+  const labels = ['A','B','C','D'];
+  const container = document.getElementById('optsContainer');
+  container.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    let optText = opt.replace(/`([^`]+)`/g, '<code>$1</code>');
+    btn.innerHTML = `<span class="ol">${labels[i]}</span><span class="opt-text">${optText}</span>`;
+    btn.onclick = () => chooseAnswer(i);
+    container.appendChild(btn);
+  });
+
+  // Reset feedback & next btn
+  const fb = document.getElementById('fbBox');
+  fb.className = 'fb-box';
+  fb.textContent = '';
+
+  const btnNext = document.getElementById('btnNext');
+  if (selectedMode === 'exam') {
+    btnNext.classList.add('show');
+    btnNext.textContent = currentIdx < quizQuestions.length - 1 ? 'Next ▶' : 'Finish 🏁';
+    document.getElementById('optsContainer').querySelectorAll('.opt-btn').forEach(b => b.disabled = false);
+  } else {
+    btnNext.classList.remove('show');
+  }
+}
+
+function chooseAnswer(idx) {
+  if (answered) return;
+  const q = quizQuestions[currentIdx];
+  answers[currentIdx] = idx;
+
+  const btns = document.getElementById('optsContainer').querySelectorAll('.opt-btn');
+
+  if (selectedMode === 'practice') {
+    answered = true;
+    btns.forEach(b => b.disabled = true);
+    btns[q.ans].classList.add('correct');
+    const fb = document.getElementById('fbBox');
+
+    if (idx === q.ans) {
+      btns[idx].classList.add('correct');
+      fb.className = 'fb-box correct show';
+      fb.textContent = '✅ Correct!';
+    } else {
+      btns[idx].classList.add('wrong');
+      fb.className = 'fb-box wrong show';
+      fb.textContent = `❌ Wrong! Correct: ${['A','B','C','D'][q.ans]}. ${q.opts[q.ans]}`;
+    }
+
+    const btnNext = document.getElementById('btnNext');
+    btnNext.classList.add('show');
+    btnNext.textContent = currentIdx < quizQuestions.length - 1 ? 'Next ▶' : 'Finish 🏁';
+  } else {
+    // Exam mode — just highlight selected
+    btns.forEach(b => b.style.borderColor = '');
+    btns[idx].style.borderColor = 'var(--primary)';
+    btns[idx].style.background = 'var(--primary-light)';
+  }
+}
+
+function skipQ() {
+  answers[currentIdx] = -1;
+  currentIdx++;
+  renderQ();
+}
+
+function nextQ() {
+  // If exam mode and nothing chosen, count as skipped
+  if (answers[currentIdx] === null) answers[currentIdx] = -1;
+  currentIdx++;
+  if (currentIdx >= quizQuestions.length) showResult();
+  else renderQ();
+}
+
+function showResult() {
+  // Fill remaining as skipped
+  for (let i = currentIdx; i < quizQuestions.length; i++) {
+    if (answers[i] === null) answers[i] = -1;
+  }
+
+  let correct = 0, wrong = 0, skipped = 0;
+  quizQuestions.forEach((q, i) => {
+    if (answers[i] === -1) skipped++;
+    else if (answers[i] === q.ans) correct++;
+    else wrong++;
+  });
+
+  const total = quizQuestions.length;
+  const pct = Math.round((correct / total) * 100);
+
+  document.getElementById('rCorrect').textContent = correct;
+  document.getElementById('rWrong').textContent = wrong;
+  document.getElementById('rSkipped').textContent = skipped;
+  document.getElementById('scorePct').textContent = pct + '%';
+
+  const ring = document.getElementById('scoreRing');
+  if (pct >= 80) { ring.style.borderColor = 'var(--success)'; ring.style.color = '#15803d'; document.getElementById('resEmoji').textContent = '🎉'; document.getElementById('resTitle').textContent = 'Excellent!'; }
+  else if (pct >= 60) { ring.style.borderColor = 'var(--warning)'; ring.style.color = '#b45309'; document.getElementById('resEmoji').textContent = '👍'; document.getElementById('resTitle').textContent = 'Good Job!'; }
+  else { ring.style.borderColor = 'var(--danger)'; ring.style.color = '#dc2626'; document.getElementById('resEmoji').textContent = '📚'; document.getElementById('resTitle').textContent = 'Keep Practicing!'; }
+
+  document.getElementById('resSub').textContent = `${correct}/${total} correct · ${pct}%`;
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('progressText').textContent = 'Quiz Complete!';
+
+  showScreen('resultScreen');
+}
+
+function showReview() {
+  const container = document.getElementById('revContainer');
+  container.innerHTML = '';
+  const labels = ['A','B','C','D'];
+
+  quizQuestions.forEach((q, i) => {
+    const a = answers[i];
+    const isSkip = a === -1;
+    const isRight = !isSkip && a === q.ans;
+    const cls = isSkip ? 'c-skip' : isRight ? 'c-right' : 'c-wrong';
+    const icon = isSkip ? '⏭' : isRight ? '✅' : '❌';
+
+    let qText = q.q.replace(/`([^`]+)`/g, '<code>$1</code>');
+    const card = document.createElement('div');
+    card.className = `rev-card ${cls}`;
+    card.innerHTML = `
+      <div class="rev-q">${icon} Q${i+1}: ${qText}</div>
+      <div class="rev-ans">
+        ${!isSkip && a !== q.ans ? `<div style="color:var(--danger)">Your answer: <span>${labels[a]}. ${q.opts[a]}</span></div>` : ''}
+        ${isSkip ? `<div style="color:var(--warning)">Skipped</div>` : ''}
+        <div style="color:var(--success)">Correct: <span>${labels[q.ans]}. ${q.opts[q.ans]}</span></div>
+      </div>`;
+    container.appendChild(card);
+  });
+
+  showScreen('reviewScreen');
+}
+
+function retryQuiz() {
+  answers = new Array(quizQuestions.length).fill(null);
+  quizQuestions = shuffle(quizQuestions);
+  currentIdx = 0;
+  showScreen('quizScreen');
+  renderQ();
+}
+
+function goHome() {
+  showScreen('homeScreen');
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('progressText').textContent = 'Ready';
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
